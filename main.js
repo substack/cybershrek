@@ -31,7 +31,8 @@ resl({
     var draw = {
       shrek: shrek(data),
       col: col(),
-      floor: floor()
+      floor: floor(),
+      sky: sky()
     }
     var cols = []
     for (var i = 0; i < 20; i++) {
@@ -39,8 +40,8 @@ resl({
       cols.push({ location: [-100*Math.sin(theta),10.5,100*Math.cos(theta)] })
     }
     regl.frame(function () {
-      regl.clear({ color: [0,0,0,1] })
       camera(function () {
+        draw.sky()
         draw.shrek()
         draw.col(cols)
         draw.floor()
@@ -48,6 +49,60 @@ resl({
     })
   }
 })
+
+function sky () {
+  var iview = [], iproj = [], model = []
+  return regl({
+    frag: `
+      precision mediump float;
+      uniform mat4 iview, iproj, model;
+      varying vec2 pos;
+      void main () {
+        vec4 d = vec4(-pos,1,0);
+        vec3 v = normalize((iproj*iview*model*d).xyz);
+        float x = abs(clamp(0.0,1.0,
+          sin(v.x*30.0+v.z*40.0+sin(v.x)) + sin((v.y+v.z)*20.0))*0.2
+          + 0.5
+          + sin(sin(v.x*2.0)+sin(v.y*3.0)+sin(v.z)*4.0)*0.2
+          + sin((v.x*20.0+v.y*v.z*30.0+v.z*50.0))*0.3
+          + sin(v.z*8.0+v.y*4.0)*0.2
+        );
+        gl_FragColor = vec4(x*0.8,x*0.2,x,1);
+      }
+    `,
+    vert: `
+      precision mediump float;
+      attribute vec2 position;
+      varying vec2 pos;
+      void main () {
+        pos = 1.0-2.0*position;
+        gl_Position = vec4(pos,0,1);
+      }
+    `,
+    attributes: {
+      position: [-2,0,0,-2,2,2]
+    },
+    uniforms: {
+      model: function (context, props) {
+        mat4.identity(model)
+        mat4.rotateZ(model, model, context.time*0.01);
+        mat4.rotateY(model, model, context.time*0.1);
+        return model
+      },
+      iproj: function (context, props) {
+        return mat4.invert(iproj, context.projection)
+      },
+      iview: function (context, props) {
+        return mat4.invert(iview, context.view)
+      }
+    },
+    elements: [[0,1,2]],
+    depth: {
+      enable: false,
+      mask: false
+    }
+  })
+}
 
 function floor () {
   var positions = []
