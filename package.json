@@ -10,6 +10,10 @@
     "simplicial-complex": "^1.0.0"
   },
   "scripts": {
-    "build": "bin/midi.sh"
+    "build": "bin/midi.sh",
+    "start": "budo main.js"
+  },
+  "devDependencies": {
+    "budo": "^8.3.0"
   }
 }
