@@ -9,8 +9,7 @@
     "regl": "^1.1.0",
     "regl-camera": "^1.0.0",
     "resl": "^1.0.2",
-    "simplicial-complex": "^1.0.0",
-    "sphere-mesh": "^0.2.2"
+    "simplicial-complex": "^1.0.0"
   },
   "scripts": {
     "build": "bin/midi.sh",
