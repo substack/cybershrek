@@ -8,6 +8,7 @@
     "parse-wavefront-obj": "^1.0.3",
     "regl": "^1.1.0",
     "regl-camera": "^1.0.0",
+    "regl-stereo": "^1.0.0",
     "resl": "^1.0.2",
     "simplicial-complex": "^1.0.0"
   },
